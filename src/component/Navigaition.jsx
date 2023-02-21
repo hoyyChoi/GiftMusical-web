@@ -8,7 +8,7 @@ const Navigation = () => {
       <div>
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
           <Container>
-            <Navbar.Brand href="/"><FiGift/> Gift-Musical</Navbar.Brand>
+            <Navbar.Brand href="/"><div style={{display:'flex'}}><FiGift style={{marginRight:"5px"}}/>Gift-Musical</div></Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">
               <Nav className="me-auto">
