@@ -4,9 +4,12 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin,{ Draggable } from "@fullcalendar/interaction"
 import timeGridPlugin from "@fullcalendar/timegrid";
 import styled from 'styled-components';
+import ChangeName from './ChangeName';
 
 
-
+// 기능 - 날짜 더블클릭시, 메모장 기능
+//  - 이벤트 더블클릭시, 이름 변경 및 커스텀 생성가능
+// 
 
 
 
@@ -18,7 +21,10 @@ const Calendar = () => {
         completed: true,
         color: true ? '#E74C3C' : '#ABEBC6',
       }
-
+      const [title,setTitle] = useState('xxxx')
+      const [modalShow,setModalShow] = useState(false)
+      const [change,setChange] = useState(false)
+      const [name,setName] = useState('')
       const [state, setState] = useState({
         weekendsVisible: true,
         externalEvents: [
@@ -30,7 +36,7 @@ const Calendar = () => {
         calendarEvents: [
           {
             id: 1,
-            title: "All-day event",
+            title: title,
             color: "#388e3c",
             start: "2023-02-12",
             end: "2023-02-16",
@@ -48,38 +54,47 @@ const Calendar = () => {
       });
 
     const handleDateClick = (arg)=>{
-        alert(arg.dateStr)
+        console.log(arg.dateStr)
+        
     }
 
     // const renderEventContent =(arg)=>{
-    //   alert(arg.dateStr)
+    //   console.log(arg.target)
     // }
 
+    
 
     useEffect(()=>{   
       let draggableEl = document.getElementById("external-events");
+      // let eventElement = document.getElementsByClassName('fc-event fc-event-start fc-event-end fc-event-past fc-daygrid-event fc-daygrid-block-event fc-h-event')
+      // eventElement.this.firstRef = React.createRef()
+      // appendChild("<li>새로 추가된  아이템</li>")
+      // console.log(eventElement.className)
+      // console.log(eventElement)
       new Draggable(draggableEl, {
         itemSelector: ".fc-event",
         eventData: function (eventEl) {
           let id = eventEl.dataset.id;
           let title = eventEl.getAttribute("title");
-          let color = eventEl.dataset.color;
+          let color = eventEl.getAttribute("color");
           let custom = eventEl.dataset.custom;
-
           return {
             id: id,
             title: title,
             color: color,
             custom: custom,
-            create: true
+            create: true,
+
           };
         }
       });
-    },[])
+    },[title])
 
+
+    console.log(title)
   return (
     <div style={{display:"flex",}}>
-      <div style={{width:"900px",margin:"30px",marginLeft:"120px",}}>
+      <div style={{width:"900px",margin:"30px",marginLeft:"120px",}} className={change ? "shine" : ""}>
           <FullCalendar
           plugins={[ dayGridPlugin, timeGridPlugin, interactionPlugin ]}
           headerToolbar={{
@@ -89,20 +104,23 @@ const Calendar = () => {
             }}
           initialView="dayGridMonth"
           selectable={true}
-          editable={true}
-          selectMirror={true}
+          editable={change}
+          //selectMirror={true}
           dayMaxEvents={true}
+          droppable={true}
           titleFormat={{ year: 'numeric', month: 'short' }}
-          // eventContent={renderEventContent}
+          //eventContent={renderEventContent}
           dateClick={handleDateClick}
           eventClick={(e) => {
-              console.log(e.event._def.title)
+              console.log(e)
+              setName(e.event._def.title)
+              setModalShow(true)
+              console.log(modalShow)
             }}
-          events={[
-              { title: 'event 1', date: '2023-02-12' },
-              { title: 'event 2', date: '2023-02-22' }
-          ]}
+          events={state.calendarEvents}
+          //\\eventContent={}
           />
+          <ChangeName show={modalShow} onHide={() => setModalShow(false)} name={name} setTitle={setTitle}/>
           <PositionBtn>
              zzzzzz
           </PositionBtn>
@@ -111,16 +129,16 @@ const Calendar = () => {
       {/* add event 드래그 목록 출력 배열함수 */}
       {state.externalEvents.map((event) => (
         <div
-          className="fc-event fc-h-event mb-1 fc-daygrid-event fc-daygrid-block-event p-2"
+          className="fc-event fc-h-event mb-1 fc-daygrid-event fc-daygrid-block-event p-2 "
           title={event.title}
           data-id={event.id}
-          data-color={event.color}
-          data-custom={event.custom}
+          color={event.color}
+          custom={event.custom}
           key={event.id}
           style={{
             backgroundColor: event.color,
             borderColor: event.color,
-            cursor: "pointer"
+            cursor: "pointer",
           }}
         >
           <div className="fc-event-main">
@@ -131,6 +149,8 @@ const Calendar = () => {
           </div>
         </div>
       ))}
+        <button style={{height:'50px', width:'50px', borderRadius:"50%",backgroundColor:'orange'}} onClick={()=>setChange(true)}>수정</button>
+        <button style={{height:'50px', width:'50px', borderRadius:"50%",backgroundColor:'green'}} onClick={()=>setChange(false)}>완료</button>
         </div>
     </div>
 
