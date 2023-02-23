@@ -5,7 +5,7 @@ import interactionPlugin,{ Draggable } from "@fullcalendar/interaction"
 import timeGridPlugin from "@fullcalendar/timegrid";
 import styled from 'styled-components';
 import ChangeName from './ChangeName';
-
+import Toast from './Toast';
 
 
 // 기능 - 날짜 더블클릭시, 메모장 기능
@@ -18,6 +18,8 @@ const Calendar = () => {
 
       const [modalShow,setModalShow] = useState(false)
       const [change,setChange] = useState(false)
+      const [ToastStatus, setToastStatus] = useState(false);
+      const [ToastMsg, setToastMsg] = useState("");
 
       const [schedule,setSchedule] = useState({
         id: 3433,
@@ -29,10 +31,10 @@ const Calendar = () => {
       const [state, setState] = useState({
         weekendsVisible: true,
         externalEvents: [
-          { title: "약속 1", color: "#0097a7", id: 34432, custom: "점심약속" },
-          { title: "약속 2", color: "#f44336", id: 323232 },
-          { title: "약속 3", color: "#f57f17", id: 1111 },
-          { title: "약속 4", color: "#90a4ae", id: 432432 }
+          { title: "점심 약속", color: "#0097a7", id: 34432, custom: "인호랑 영석이형" },
+          { title: "저녁 약속", color: "#f44336", id: 323232 },
+          { title: "운동", color: "#f57f17", id: 1111 },
+          { title: "여행", color: "#90a4ae", id: 432432 }
         ],
         calendarEvents: [
           {
@@ -75,7 +77,7 @@ const Calendar = () => {
           let id = eventEl.dataset.id;
           let title = eventEl.getAttribute("title");
           let color = eventEl.getAttribute("color");
-          let custom = eventEl.dataset.custom;
+          let custom = eventEl.getAttribute("custom");
           return {
             id: id,
             title: title,
@@ -85,10 +87,8 @@ const Calendar = () => {
 
           };
         }
-
-
       });
-      
+
     },[])
 
   return (
@@ -110,21 +110,21 @@ const Calendar = () => {
           titleFormat={{ year: 'numeric', month: 'short' }}
           dateClick={handleDateClick}
           eventClick={(e) => {
-              console.log(e)
+              alert(e.event._def.extendedProps.custom)
+              
             }}
           events={state.calendarEvents}
           />
-          <ChangeName show={modalShow} onHide={() => setModalShow(false)} schedule={schedule} setSchedule={setSchedule} state={state} setState={setState}/>
+          <ChangeName show={modalShow} onHide={() => setModalShow(false)}  setModalShow={setModalShow} schedule={schedule} setSchedule={setSchedule} state={state} setState={setState}/>
       </div>
-      <div style={{ margin: "0 0 20px" }}>
-          <input
+      
+      <div id="external-events" style={{width:"200px",margin:'auto'}}>
+        <input style={{ margin: "0 0 20px" , height:'50px', width:'50px', borderRadius:"50%",backgroundColor:'skyblue',}}
             type="submit"
             name="name"
             onClick={addEvent}
-            value="add external event"
+            value="add"
           />
-        </div>
-      <div id="external-events" style={{width:"200px",margin:'auto'}}>
       {/* add event 드래그 목록 출력 배열함수 */}
       {state.externalEvents.map((event) => (
         <div
