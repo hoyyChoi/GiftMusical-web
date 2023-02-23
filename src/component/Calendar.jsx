@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import ChangeName from './ChangeName';
 
 
+
 // 기능 - 날짜 더블클릭시, 메모장 기능
 //  - 이벤트 더블클릭시, 이름 변경 및 커스텀 생성가능
 // 
@@ -15,16 +16,16 @@ import ChangeName from './ChangeName';
 
 const Calendar = () => {
 
-    const arr ={
-        title: 'dfasf',
-        date: '22-02-11',
-        completed: true,
-        color: true ? '#E74C3C' : '#ABEBC6',
-      }
-      const [title,setTitle] = useState('xxxx')
       const [modalShow,setModalShow] = useState(false)
       const [change,setChange] = useState(false)
-      const [name,setName] = useState('')
+
+      const [schedule,setSchedule] = useState({
+        id: 3433,
+        title: "Timed event",
+        color: "#333333",
+        custom: "custom stuff"
+      })
+
       const [state, setState] = useState({
         weekendsVisible: true,
         externalEvents: [
@@ -36,7 +37,7 @@ const Calendar = () => {
         calendarEvents: [
           {
             id: 1,
-            title: title,
+            title: "good afternoon",
             color: "#388e3c",
             start: "2023-02-12",
             end: "2023-02-16",
@@ -61,16 +62,13 @@ const Calendar = () => {
     // const renderEventContent =(arg)=>{
     //   console.log(arg.target)
     // }
-
+    const addEvent = () => {
+      setModalShow(true)
+    };
     
 
     useEffect(()=>{   
       let draggableEl = document.getElementById("external-events");
-      // let eventElement = document.getElementsByClassName('fc-event fc-event-start fc-event-end fc-event-past fc-daygrid-event fc-daygrid-block-event fc-h-event')
-      // eventElement.this.firstRef = React.createRef()
-      // appendChild("<li>새로 추가된  아이템</li>")
-      // console.log(eventElement.className)
-      // console.log(eventElement)
       new Draggable(draggableEl, {
         itemSelector: ".fc-event",
         eventData: function (eventEl) {
@@ -87,11 +85,12 @@ const Calendar = () => {
 
           };
         }
+
+
       });
-    },[title])
+      
+    },[])
 
-
-    console.log(title)
   return (
     <div style={{display:"flex",}}>
       <div style={{width:"900px",margin:"30px",marginLeft:"120px",}} className={change ? "shine" : ""}>
@@ -109,22 +108,22 @@ const Calendar = () => {
           dayMaxEvents={true}
           droppable={true}
           titleFormat={{ year: 'numeric', month: 'short' }}
-          //eventContent={renderEventContent}
           dateClick={handleDateClick}
           eventClick={(e) => {
               console.log(e)
-              setName(e.event._def.title)
-              setModalShow(true)
-              console.log(modalShow)
             }}
           events={state.calendarEvents}
-          //\\eventContent={}
           />
-          <ChangeName show={modalShow} onHide={() => setModalShow(false)} name={name} setTitle={setTitle}/>
-          <PositionBtn>
-             zzzzzz
-          </PositionBtn>
+          <ChangeName show={modalShow} onHide={() => setModalShow(false)} schedule={schedule} setSchedule={setSchedule} state={state} setState={setState}/>
       </div>
+      <div style={{ margin: "0 0 20px" }}>
+          <input
+            type="submit"
+            name="name"
+            onClick={addEvent}
+            value="add external event"
+          />
+        </div>
       <div id="external-events" style={{width:"200px",margin:'auto'}}>
       {/* add event 드래그 목록 출력 배열함수 */}
       {state.externalEvents.map((event) => (
