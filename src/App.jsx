@@ -5,6 +5,7 @@ import Navigation from './component/Navigaition';
 import Home from './component/Home';
 import CalendarView from './component/CalendarView';
 import Signin from './component/Signin';
+import Signup from './component/Signup';
 
 function App() {
   
@@ -16,7 +17,7 @@ function App() {
           <Route path='/' element={<Home />}/>
           <Route path='/calendarview' element={<CalendarView/>} />
            <Route path='/login' element={<Signin />}/>
-          {/*<Route path='/register' element={<Signup />}/> */}
+          <Route path='/register' element={<Signup />}/>
       </Routes>
     </div>
   )
