@@ -8,6 +8,7 @@ import ChangeName from './ChangeName';
 import Toast from './Toast';
 
 
+
 // 기능 - 날짜 더블클릭시, 메모장 기능
 //  - 이벤트 더블클릭시, 이름 변경 및 커스텀 생성가능
 // 
@@ -78,6 +79,14 @@ const Calendar = () => {
           let title = eventEl.getAttribute("title");
           let color = eventEl.getAttribute("color");
           let custom = eventEl.getAttribute("custom");
+          state.calendarEvents.push({
+            id: id,
+            title: title,
+            color: color,
+            custom: custom,
+            create: true,
+
+          })
           return {
             id: id,
             title: title,
@@ -88,7 +97,6 @@ const Calendar = () => {
           };
         }
       });
-
     },[])
 
   return (
@@ -110,8 +118,19 @@ const Calendar = () => {
           titleFormat={{ year: 'numeric', month: 'short' }}
           dateClick={handleDateClick}
           eventClick={(e) => {
-              alert(e.event._def.extendedProps.custom)
-              
+              //console.log(typeof e.event._instance.range.end)
+              if(change){
+                for(let i=0; i<state.externalEvents.length; i++){
+                  if(state.calendarEvents[i].title === e.event._def.title){
+                    if(confirm("'"+ e.event._def.title +"' 매니저의 일정을 삭제하시겠습니까 ?")){
+                      // 확인 클릭 시
+                      e.event.remove();
+                      state.calendarEvents.splice(i,1)
+                      console.log(state.calendarEvents)
+                    }
+                  }
+                }
+              }
             }}
           events={state.calendarEvents}
           />
