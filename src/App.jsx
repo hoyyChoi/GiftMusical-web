@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import Navigation from './component/Navigaition';
 import Home from './component/Home';
 import CalendarView from './component/CalendarView';
+import Signin from './component/Signin';
 
 function App() {
   
@@ -14,8 +15,8 @@ function App() {
       <Routes>
           <Route path='/' element={<Home />}/>
           <Route path='/calendarview' element={<CalendarView/>} />
-          {/* <Route path='/login' element={<Signin />}/>
-          <Route path='/register' element={<Signup />}/> */}
+           <Route path='/login' element={<Signin />}/>
+          {/*<Route path='/register' element={<Signup />}/> */}
       </Routes>
     </div>
   )
