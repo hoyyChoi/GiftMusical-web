@@ -12,7 +12,7 @@ const Navigation = () => {
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">
               <Nav className="me-auto">
-                <Nav.Link href="#features">일정보기</Nav.Link>
+                <Nav.Link href="/practice">일정보기</Nav.Link>
                 <Nav.Link href="#pricing">연습</Nav.Link>
                 
               </Nav>

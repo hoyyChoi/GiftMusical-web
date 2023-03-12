@@ -1,12 +1,14 @@
-import React, { useEffect,useState} from 'react'
-import FullCalendar from '@fullcalendar/react' // must go before plugins
+import { useEffect,useState,useRef} from 'react'
+import FullCalendar from '@fullcalendar/react'  // must go before plugins
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin,{ Draggable } from "@fullcalendar/interaction"
 import timeGridPlugin from "@fullcalendar/timegrid";
 import styled from 'styled-components';
 import ChangeName from './ChangeName';
-import Toast from './Toast';
-
+import '../../Calendar.css';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 
 
 // 기능 - 날짜 더블클릭시, 메모장 기능
@@ -19,8 +21,7 @@ const Calendar = () => {
 
       const [modalShow,setModalShow] = useState(false)
       const [change,setChange] = useState(false)
-      const [ToastStatus, setToastStatus] = useState(false);
-      const [ToastMsg, setToastMsg] = useState("");
+      const [event,setEvent] = useState(3)
 
       const [schedule,setSchedule] = useState({
         id: 3433,
@@ -42,24 +43,32 @@ const Calendar = () => {
             id: 1,
             title: "good afternoon",
             color: "#388e3c",
-            start: "2023-02-12",
-            end: "2023-02-16",
+            start: "2023-03-12",
+            end: "2023-03-16",
             custom: "questo è un campo custom"
           },
           {
             id: 2,
             title: "Timed event",
             color: "#0097a7",
-            start: "2023-02-01",
-            end: "2023-02-04",
+            start: "2023-03-01",
+            end: "2023-03-04",
             custom: "custom stuff"
           }
         ]
       });
 
     const handleDateClick = (arg)=>{
-        console.log(arg.dateStr)
-        
+        // console.log(arg)
+        // state.calendarEvents.push({
+        //   id: 3,
+        //   title: "Timed event",
+        //   color: "#0097a7",
+        //   start: arg.dateStr,
+        //   end: arg.dateStr,
+        //   custom: "custom stuff"
+        // })
+        // console.log(state.calendarEvents)
     }
 
     // const renderEventContent =(arg)=>{
@@ -68,6 +77,29 @@ const Calendar = () => {
     const addEvent = () => {
       setModalShow(true)
     };
+
+    const dragEvent =(e)=>{
+
+      let newEvent = {
+        id: event,
+        title: "Timed event1",
+        color: "#0097a7",
+        start: e.startStr,
+        end: e.endStr,
+        
+      }
+  
+      setState((state) => {
+        return {
+          ...state,
+          calendarEvents:state.calendarEvents.concat(newEvent)
+        };
+      });
+
+      console.log(state.calendarEvents)
+      setEvent(event+1)
+   
+    }
     
 
     useEffect(()=>{   
@@ -97,12 +129,13 @@ const Calendar = () => {
           };
         }
       });
-    },[])
-
+      console.log(state.calendarEvents)
+    },[state.calendarEvents])
   return (
     <div style={{display:"flex",}}>
-      <div style={{width:"900px",margin:"30px",marginLeft:"120px",}} className={change ? "shine" : ""}>
-          <FullCalendar
+      <div style={{width:"1100px",margin:"30px",marginLeft:"120px"}} className={change ? "shine" : ""}>
+          <FullCalendar 
+          //themeSystem={bootstrap5}
           plugins={[ dayGridPlugin, timeGridPlugin, interactionPlugin ]}
           headerToolbar={{
               left: "prev,next today",
@@ -111,15 +144,26 @@ const Calendar = () => {
             }}
           initialView="dayGridMonth"
           selectable={true}
+          select={(e)=>{
+            dragEvent(e)
+          }}
+          unselect={(e)=>console.log(e)}
           editable={change}
           //selectMirror={true}
           dayMaxEvents={true}
           droppable={true}
-          titleFormat={{ year: 'numeric', month: 'short' }}
+         titleFormat={{ month: 'long' }}
+          // titleFormat= {function (date) {
+          //   year = date.date.year;
+          //   month = date.date.month + 1;
+      
+          //   return year + "년 " + month + "월";
+          // }}
           dateClick={handleDateClick}
           eventClick={(e) => {
               //console.log(typeof e.event._instance.range.end)
               if(change){
+                console.log(e)
                 for(let i=0; i<state.externalEvents.length; i++){
                   if(state.calendarEvents[i].title === e.event._def.title){
                     if(confirm("'"+ e.event._def.title +"' 매니저의 일정을 삭제하시겠습니까 ?")){
@@ -133,7 +177,12 @@ const Calendar = () => {
               }
             }}
           events={state.calendarEvents}
+          eventRender={(e)=>console.log(e.el)}
           />
+
+
+
+
           <ChangeName show={modalShow} onHide={() => setModalShow(false)}  setModalShow={setModalShow} schedule={schedule} setSchedule={setSchedule} state={state} setState={setState}/>
       </div>
       

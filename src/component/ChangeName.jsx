@@ -18,19 +18,21 @@ const ChangeName = (props) => {
             id: props.schedule.id,
             title: title,
             color: Selected,
-            custom: body
+            custom: body,
+            end: "2023-03-20",
+            start:"2023-03-15"
           };
       
           props.setState((state) => {
             return {
               ...state,
-              externalEvents:state.externalEvents.concat(newEvent)
+              calendarEvents:state.calendarEvents.concat(newEvent)
             };
           });
         props.setModalShow(false)
     }
 
-   
+  
     const handleSelect = (e) => {
         setSelected(e.target.value);
     };
