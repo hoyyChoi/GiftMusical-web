@@ -55,8 +55,7 @@ const Signup = () => {
 
   const handleSubmit=(e)=>{
     e.preventDefault();
-   
-    
+    const parac = 1;
  
 }
 
