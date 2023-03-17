@@ -1,41 +1,45 @@
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import Modal from 'react-bootstrap/Modal';
 import Dropdown from 'react-bootstrap/Dropdown';
+import { useSelector } from 'react-redux';
 
-const ChangeName = (props) => {
+const ChangeSchedule = (props) => {
     
     const selectList = [["#D25565",'빨간색'],["#9775fa",'보라색'],["#ffa94d",'주황색'],["#74c0fc",'파란색'],["#f06595",'핑크색'],["#63e6be",'연두색'],["#a9e34b",'초록색'],["#4d638c",'남색'],["#495057",'검정색']];
-
-    const [update,setUpdate] = useState('')
     const [title,setTitle] = useState('')
     const [body,setBody] = useState('')
-    const [sortOption,setSortOption] = useState("sort")
     const [Selected, setSelected] = useState("#D25565");
-    
 
-    const titleUpdate = ()=>{
-        let newEvent = {
-            id: props.schedule.id,
-            title: title,
-            color: Selected,
-            custom: body,
-            end: "2023-03-20",
-            start:"2023-03-15"
-          };
-      
-          props.setState((state) => {
-            return {
-              ...state,
-              calendarEvents:state.calendarEvents.concat(newEvent)
-            };
-          });
-        props.setModalShow(false)
-    }
 
-  
+    const start = useSelector(state=>state.start)
+    const end = useSelector(state=>state.end)
+    const currentId = useSelector(state=>state.currentId)
+
     const handleSelect = (e) => {
         setSelected(e.target.value);
     };
+    
+    const check = ()=>{
+      let newEvent = {
+        id: currentId,
+        title: title,
+        color: Selected,
+        start: start,
+        end: end,
+      }
+      props.setState((state) => {
+        return {
+          ...state,
+          calendarEvents:props.state.calendarEvents.concat(newEvent)
+        };
+      });
+      
+
+      props.setShow(false)
+      props.setModalShow(false)
+     
+    }
+
     
   return (
     <Modal
@@ -72,13 +76,11 @@ const ChangeName = (props) => {
         </div>
             
             <div className="modal-footer modalBtnContainer-modifyEvent">
-                <button type="button" className="btn btn-default" >닫기</button>
-                <button type="button" className="btn btn-danger" id="deleteEvent">삭제</button>
-                <button type="button" className="btn btn-primary" id="updateEvent" onClick={titleUpdate}>저장</button>
+                <button type="button" className="btn btn-primary" id="updateEvent" onClick={check}>저장</button>
             </div>
         </Modal.Body>
       </Modal>
   )
 }
 
-export default ChangeName
+export default ChangeSchedule

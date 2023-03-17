@@ -4,51 +4,53 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin,{ Draggable } from "@fullcalendar/interaction"
 import timeGridPlugin from "@fullcalendar/timegrid";
 import styled from 'styled-components';
-import ChangeName from './ChangeName';
 import '../../Calendar.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import bootstrap5Plugin from '@fullcalendar/bootstrap5';
+import PreModal from './PreModal';
+import { useDispatch, useSelector } from 'react-redux';
+import ErrorModal from './ErrorModal';
 
 
 // 기능 - 날짜 더블클릭시, 메모장 기능
 //  - 이벤트 더블클릭시, 이름 변경 및 커스텀 생성가능
 // 
 
+// 2023.3.13
+// 드래그 하면 아밴트 생성 되게 만들어 놓음
+// -> 드래그 했을때 모달 창으로 이벤트 상세 이름 및 추가적 내용 볼 수 있게
+// 추가적으로 +버튼 누르면 이벤트 수동으로 날짜 체크해서 넣을 수 있게 끔 (일단 나중에)_
+// event 여러개 넣었을때 칸 자동으로 늘어나게 하는 법 
+
 
 
 const Calendar = () => {
 
       const [modalShow,setModalShow] = useState(false)
+      const [error,setError] = useState(false)
       const [change,setChange] = useState(false)
-      const [event,setEvent] = useState(3)
-
-      const [schedule,setSchedule] = useState({
-        id: 3433,
-        title: "Timed event",
-        color: "#333333",
-        custom: "custom stuff"
-      })
+      const [currentId, setCurrentId] = useState(1)
+      const [start,setStart] = useState('')
+      const [end,setEnd] = useState('')
+      const [descrition,setDescription] = useState('')
+      
+      
+      let dispatch = useDispatch()
+      let custom = useSelector(state=>state.descrition)
+      let auth = useSelector(state=>state.auth)
 
       const [state, setState] = useState({
-        weekendsVisible: true,
-        externalEvents: [
-          { title: "점심 약속", color: "#0097a7", id: 34432, custom: "인호랑 영석이형" },
-          { title: "저녁 약속", color: "#f44336", id: 323232 },
-          { title: "운동", color: "#f57f17", id: 1111 },
-          { title: "여행", color: "#90a4ae", id: 432432 }
-        ],
         calendarEvents: [
           {
-            id: 1,
+            id: 0,
             title: "good afternoon",
-            color: "#388e3c",
+            color: "#062aab",
             start: "2023-03-12",
             end: "2023-03-16",
             custom: "questo è un campo custom"
           },
           {
-            id: 2,
+            id: 1,
             title: "Timed event",
             color: "#0097a7",
             start: "2023-03-01",
@@ -58,84 +60,32 @@ const Calendar = () => {
         ]
       });
 
-    const handleDateClick = (arg)=>{
-        // console.log(arg)
-        // state.calendarEvents.push({
-        //   id: 3,
-        //   title: "Timed event",
-        //   color: "#0097a7",
-        //   start: arg.dateStr,
-        //   end: arg.dateStr,
-        //   custom: "custom stuff"
-        // })
-        // console.log(state.calendarEvents)
-    }
-
-    // const renderEventContent =(arg)=>{
-    //   console.log(arg.target)
-    // }
-    const addEvent = () => {
-      setModalShow(true)
-    };
-
-    const dragEvent =(e)=>{
-
-      let newEvent = {
-        id: event,
-        title: "Timed event1",
-        color: "#0097a7",
-        start: e.startStr,
-        end: e.endStr,
-        
+    const addDragEvent =(e)=>{
+      if(auth === true){
+        setStart(e.startStr)
+        setEnd(e.endStr)
+        setCurrentId(currentId+1)
+        setModalShow(true)
+      }else{
+        setError(true)
       }
-  
-      setState((state) => {
-        return {
-          ...state,
-          calendarEvents:state.calendarEvents.concat(newEvent)
-        };
-      });
-
-      console.log(state.calendarEvents)
-      setEvent(event+1)
-   
     }
-    
 
-    useEffect(()=>{   
-      let draggableEl = document.getElementById("external-events");
-      new Draggable(draggableEl, {
-        itemSelector: ".fc-event",
-        eventData: function (eventEl) {
-          let id = eventEl.dataset.id;
-          let title = eventEl.getAttribute("title");
-          let color = eventEl.getAttribute("color");
-          let custom = eventEl.getAttribute("custom");
-          state.calendarEvents.push({
-            id: id,
-            title: title,
-            color: color,
-            custom: custom,
-            create: true,
+    const hoverEvent = (e)=>{
+      setDescription(e.event._def.extendedProps.custom)
+      console.log(descrition)
+    }
 
-          })
-          return {
-            id: id,
-            title: title,
-            color: color,
-            custom: custom,
-            create: true,
+    useEffect(()=>{
+      dispatch({type:'create',payload:{start,end,currentId}})
+      dispatch({type:'seeDescription',payload:{descrition}})
+    },[start,descrition])
 
-          };
-        }
-      });
-      console.log(state.calendarEvents)
-    },[state.calendarEvents])
+
   return (
     <div style={{display:"flex",}}>
-      <div style={{width:"1100px",margin:"30px",marginLeft:"120px"}} className={change ? "shine" : ""}>
+      <div style={{minWidth:"1100px",margin:"auto",marginTop:'40px'}} className={change ? "shine" : ""}>
           <FullCalendar 
-          //themeSystem={bootstrap5}
           plugins={[ dayGridPlugin, timeGridPlugin, interactionPlugin ]}
           headerToolbar={{
               left: "prev,next today",
@@ -144,27 +94,20 @@ const Calendar = () => {
             }}
           initialView="dayGridMonth"
           selectable={true}
+          // eventMouseEnter={(e)=>hoverEvent(e)}   이거 이밴트 호버했을때 나오는 속성
           select={(e)=>{
-            dragEvent(e)
+            addDragEvent(e)
           }}
           unselect={(e)=>console.log(e)}
           editable={change}
-          //selectMirror={true}
           dayMaxEvents={true}
           droppable={true}
          titleFormat={{ month: 'long' }}
-          // titleFormat= {function (date) {
-          //   year = date.date.year;
-          //   month = date.date.month + 1;
-      
-          //   return year + "년 " + month + "월";
-          // }}
-          dateClick={handleDateClick}
+          //dateClick={handleDateClick}
           eventClick={(e) => {
               //console.log(typeof e.event._instance.range.end)
               if(change){
-                console.log(e)
-                for(let i=0; i<state.externalEvents.length; i++){
+                for(let i=0; i<state.calendarEvents.length; i++){
                   if(state.calendarEvents[i].title === e.event._def.title){
                     if(confirm("'"+ e.event._def.title +"' 매니저의 일정을 삭제하시겠습니까 ?")){
                       // 확인 클릭 시
@@ -177,23 +120,25 @@ const Calendar = () => {
               }
             }}
           events={state.calendarEvents}
-          eventRender={(e)=>console.log(e.el)}
           />
 
 
 
+          <h1>{custom}</h1>
+          <PreModal show={modalShow} onHide={() => setModalShow(false)}  setModalShow={setModalShow} state={state} setState={setState}/>
+          <ErrorModal show={error} onHide={() => setError(false)}  setModalShow={setError}/>
+          <button style={{height:'50px', width:'50px', borderRadius:"50%",backgroundColor:'orange'}} onClick={()=>setChange(true)}>수정</button>
+        <button style={{height:'50px', width:'50px', borderRadius:"50%",backgroundColor:'green'}} onClick={()=>setChange(false)}>완료</button>
 
-          <ChangeName show={modalShow} onHide={() => setModalShow(false)}  setModalShow={setModalShow} schedule={schedule} setSchedule={setSchedule} state={state} setState={setState}/>
       </div>
       
-      <div id="external-events" style={{width:"200px",margin:'auto'}}>
+      {/* <div id="external-events" style={{width:"200px",margin:'auto'}}>
         <input style={{ margin: "0 0 20px" , height:'50px', width:'50px', borderRadius:"50%",backgroundColor:'skyblue',}}
             type="submit"
             name="name"
             onClick={addEvent}
             value="add"
           />
-      {/* add event 드래그 목록 출력 배열함수 */}
       {state.externalEvents.map((event) => (
         <div
           className="fc-event fc-h-event mb-1 fc-daygrid-event fc-daygrid-block-event p-2 "
@@ -216,9 +161,8 @@ const Calendar = () => {
           </div>
         </div>
       ))}
-        <button style={{height:'50px', width:'50px', borderRadius:"50%",backgroundColor:'orange'}} onClick={()=>setChange(true)}>수정</button>
-        <button style={{height:'50px', width:'50px', borderRadius:"50%",backgroundColor:'green'}} onClick={()=>setChange(false)}>완료</button>
-        </div>
+
+        </div> */}
     </div>
 
     

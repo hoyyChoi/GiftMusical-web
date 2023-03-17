@@ -2,8 +2,19 @@ import React from 'react'
 import { Container,Navbar,Nav,NavDropdown } from 'react-bootstrap'
 import {FiGift} from 'react-icons/fi'
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 const Navigation = () => {
+
+
+  let auth = useSelector(state=>state.auth)
+
+  const logout = ()=>{
+    localStorage.removeItem('token')
+    dispatch({type:'authB'})
+    navigate("/")
+  }
+
   return (
       <div>
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
@@ -16,10 +27,14 @@ const Navigation = () => {
                 <Nav.Link href="#pricing">연습</Nav.Link>
                 
               </Nav>
-              <Nav>
-                <Link className="nav-link" to='/login'>Sign in</Link>
-                <Link className="nav-link" to='/register'>Sign up</Link>
+              {auth?<Nav>
+                <button onClick={logout}>logout</button>
               </Nav>
+              :
+              <Nav>
+              <Link className="nav-link" to='/login'>Sign in</Link>
+              <Link className="nav-link" to='/register'>Sign up</Link>
+            </Nav>}
             </Navbar.Collapse>
           </Container>
         </Navbar>
