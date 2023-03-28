@@ -1,7 +1,8 @@
 import React,{useEffect, useState} from 'react'
 import Modal from 'react-bootstrap/Modal';
-import Dropdown from 'react-bootstrap/Dropdown';
+// import Dropdown from 'react-bootstrap/Dropdown';
 import { useSelector } from 'react-redux';
+import { Dropdown } from 'react-dropdown-now';
 
 const ChangeSchedule = (props) => {
     
@@ -45,13 +46,15 @@ const ChangeSchedule = (props) => {
     <Modal
         
         {...props}
-        size="sm"
+        size="md"
         aria-labelledby="contained-modal-title-vcenter"
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter" style={{color:"black"}}>
-            <input  type="text" defaultValue={props.name} onChange={(e)=>setTitle(e.currentTarget.value)}></input>
+          <Modal.Title id="contained-modal-title-vcenter" style={{color:"black",display:'flex',alignItems:'center'}}>
+            <h3 style={{margin:'auto'}} >일정명</h3>
+            <textarea type="text" defaultValue={props.name} className="inputModal input-title" name="edit-desc"
+                        id="edit-desc"  onChange={(e)=>setTitle(e.currentTarget.value)}></textarea>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -59,20 +62,22 @@ const ChangeSchedule = (props) => {
 
             <div className="row">
                 <div className="col-xs-12">
-                    <label className="col-xs-4" for="edit-desc">설명</label>
-                    <textarea style={{width:"260px"}} rows="4" cols="50" className="inputModal" name="edit-desc"
+                    {/* <label className="col-xs-4" for="edit-desc">설명</label> */}
+                    <h3>상세설명</h3>
+                    <textarea rows="4" cols="50" className="inputModal input-memo" name="edit-desc"
                         id="edit-desc" onChange={(e)=>setBody(e.currentTarget.value)}></textarea>
                 </div>
             </div>
-            <select onChange={handleSelect} value={Selected}>
+            <hr />
+            <select className='optionColor' onChange={handleSelect} value={Selected}>
                 {selectList.map((item) => (
                 <option value={item[0]} key={item[0]}>
                 {item[1]}
                 </option>
                 ))}                                                   
             </select>
-            <hr />
-            <div style={{width:"250px",height:'30px', backgroundColor:`${Selected}`}}></div>
+
+            <div style={{width:"440px",height:'30px', backgroundColor:`${Selected}`,marginTop:'15px'}}></div>
         </div>
             
             <div className="modal-footer modalBtnContainer-modifyEvent">

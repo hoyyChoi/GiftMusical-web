@@ -1,19 +1,33 @@
-import React from 'react'
+import React,{useEffect,useState} from 'react'
 import { Container,Navbar,Nav,NavDropdown } from 'react-bootstrap'
 import {FiGift} from 'react-icons/fi'
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { getLoginUser } from '../remotes'
+import Modal from 'react-bootstrap/Modal';
+import UserInfo from './UserInfo'
 
 const Navigation = () => {
 
 
+  const [userInfo,setUserInfo] = useState({})
+
+  const dispatch = useDispatch();
   let auth = useSelector(state=>state.auth)
 
   const logout = ()=>{
     localStorage.removeItem('token')
     dispatch({type:'authB'})
-    navigate("/")
   }
+
+  useEffect(()=>{
+    if(auth){
+      getLoginUser()
+      .then((res)=>{
+        setUserInfo(res.data.data)
+      }).catch(err=>console.log(err))
+      }
+  },[auth])
 
   return (
       <div>
@@ -28,7 +42,8 @@ const Navigation = () => {
                 
               </Nav>
               {auth?<Nav>
-                <button onClick={logout}>logout</button>
+                <Link className="nav-link" to='/userInfo'>{userInfo.email}</Link>
+                <Link className="nav-link" onClick={logout}>Log-out</Link>
               </Nav>
               :
               <Nav>

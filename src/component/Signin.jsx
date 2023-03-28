@@ -20,9 +20,6 @@ const Signin = () => {
   }
   
   
-  
-
-
   const LoginSubmit =(e)=>{
     e.preventDefault();
    
