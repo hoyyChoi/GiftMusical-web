@@ -7,6 +7,7 @@ import Signin from './component/Signin';
 import Signup from './component/Signup';
 import { getLoginUser } from './remotes';
 import { useDispatch, useSelector } from 'react-redux';
+import UserInfo from './component/UserInfo';
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
           <Route path='/' element={<Home />}/>
            <Route path='/login' element={<Signin />}/>
           <Route path='/register' element={<Signup />}/>
+          <Route path='/userInfo' element={<UserInfo />}/>
       </Routes>
     </div>
   )
