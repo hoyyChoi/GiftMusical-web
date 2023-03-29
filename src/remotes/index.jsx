@@ -1,13 +1,15 @@
 import axios from "axios";
 
 
-const conduitAxios = axios.create({
+const MusicalAxios = axios.create({
     baseURL : 'http://ec2-43-200-222-144.ap-northeast-2.compute.amazonaws.com'
 });
 
 
-const postRegisterUser=({email,password})=>conduitAxios.post('/api/v1/auth/login',{email,password});
+const postRegisterUser=({email,password})=>MusicalAxios.post('/api/v1/auth/login',{email,password});
 
-const getLoginUser=()=>conduitAxios.get('/api/v1/users/me',{headers:{authorization:`Bearer ${localStorage.getItem('token')}`}});
+const getLoginUser=()=>MusicalAxios.get('/api/v1/users/me',{headers:{authorization:`Bearer ${localStorage.getItem('token')}`}});
 
-export {postRegisterUser,getLoginUser}
+const postSchedules=(schedule)=>MusicalAxios.post('/api/v1/schedules',schedule,{headers:{authorization:`Bearer ${localStorage.getItem('token')}`}})
+
+export {postRegisterUser,getLoginUser,postSchedules}

@@ -42,25 +42,26 @@ const Calendar = () => {
       const [state, setState] = useState({
         calendarEvents: [
           {
-            id: 0,
+            scheduleId: 0,
             title: "good afternoon",
             color: "#062aab",
-            start: "2023-03-12",
-            end: "2023-03-16",
-            custom: "questo è un campo custom"
+            'start': "2023-03-12",
+            'end': "2023-03-16",
+            memo: "questo è un campo custom"
           },
           {
-            id: 1,
+            scheduleId: 1,
             title: "Timed event",
             color: "#0097a7",
-            start: "2023-03-01",
-            end: "2023-03-04",
-            custom: "custom stuff"
+            'start': "2023-03-01",
+            'end': "2023-03-04",
+            memo: "custom stuff"
           }
         ]
       });
 
     const addDragEvent =(e)=>{
+      console.log(e)
       if(auth === true){
         setStart(e.startStr)
         setEnd(e.endStr)
@@ -105,7 +106,7 @@ const Calendar = () => {
          titleFormat={{ month: 'long' }}
           //dateClick={handleDateClick}
           eventClick={(e) => {
-              //console.log(typeof e.event._instance.range.end)
+              console.log(e)
               if(change){
                 for(let i=0; i<state.calendarEvents.length; i++){
                   if(state.calendarEvents[i].title === e.event._def.title){
