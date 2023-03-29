@@ -13,14 +13,18 @@ import UserInfo from './component/UserInfo';
 function App() {
 
   //let auth = useSelector(state=>state.auth)
-  
+  const dispatch = useDispatch();
+  const [userInfo,setUserInfo] = useState({})
+  let auth = useSelector(state=>state.auth)
 
   useEffect(()=>{
     if(localStorage.getItem('token')){
       getLoginUser()
       .then(res=>{
         // 우저 정보를 네브바에 뿌랴줘야한다. 
-        console.log(res)
+        dispatch({type:'auth'})
+        setUserInfo(res.data.data)
+        
       }).catch(err=>{
         console.log(err)
       })
@@ -33,7 +37,7 @@ function App() {
 
   return (
     <div>
-      <Navigation/>
+      <Navigation userInfo={userInfo}/>
       <Routes>
           <Route path='/' element={<Home />}/>
            <Route path='/login' element={<Signin />}/>

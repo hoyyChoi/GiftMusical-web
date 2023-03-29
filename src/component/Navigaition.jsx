@@ -7,10 +7,9 @@ import { getLoginUser } from '../remotes'
 import Modal from 'react-bootstrap/Modal';
 import UserInfo from './UserInfo'
 
-const Navigation = () => {
+const Navigation = ({userInfo}) => {
 
 
-  const [userInfo,setUserInfo] = useState({})
 
   const dispatch = useDispatch();
   let auth = useSelector(state=>state.auth)
@@ -20,14 +19,6 @@ const Navigation = () => {
     dispatch({type:'authB'})
   }
 
-  useEffect(()=>{
-    if(auth){
-      getLoginUser()
-      .then((res)=>{
-        setUserInfo(res.data.data)
-      }).catch(err=>console.log(err))
-      }
-  },[auth])
 
   return (
       <div>
