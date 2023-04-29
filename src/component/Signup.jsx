@@ -14,6 +14,8 @@ const Signup = () => {
   const [email,setEmail]=useState('');
   const [username,setUsername]=useState('');
   const [password,setPassword]=useState('');
+    
+  
 
   const spaceHome =()=>{
     navigate('/')
